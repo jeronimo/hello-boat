@@ -1,0 +1,37 @@
+rmb:
+  pgns: [129283, 129284]
+  from_fields:
+    status:
+    cross_track_error:
+    direction_to_steer:
+    to_waypoint: destinationWaypointNumber
+    from_waypoint: originWaypointNumber
+    destination_latitude: destinationLatitude
+    n_or_s:
+    destination_longitude: destinationLongitude
+    e_or_s:
+    range_to_destination:
+    bearing:
+    destination_closing:
+    arrival_status:
+    ffa_mode_indicator:
+    checksum:
+  to_fields:
+    sid:
+    distanceToWaypoint:
+    courseBearingReference:
+    perpendicularCrossed:
+    arrivalCircleEntered:
+    calculationType:
+    etaTime:
+    etaDate:
+    bearingOriginToDestinationWaypoint:
+    bearingPositionToDestinationWaypoint:
+    originWaypointNumber:
+    destinationWaypointNumber:
+    destinationLatitude:
+    destinationLongitude:
+    waypointClosingVelocity:
+  calculations:
+    destination_latitude:
+    longitude:

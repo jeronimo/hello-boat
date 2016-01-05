@@ -51,4 +51,9 @@ class TestCoversions < Minitest::Test
     assert_equal '36.16211666666667', result['fields']['destinationLatitude']
   end
 
+  def test_parser_checksum
+    result = Parser.parse(@rmb_sentence)
+    assert_equal 'V*48', result['origin']['checksum']
+  end
+
 end

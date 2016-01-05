@@ -33,17 +33,13 @@ class Parser
       if config = Coversions.config(line)
         variables = line.split(',')
         config['assigned'] = {}
-        config['from_fields'].to_a.each_with_index do |field, key|
-          if field && field[0]
-            config['assigned'][field[0]] = variables[key + 1]
-          end
-        end
+        checksum = variables.pop.gsub(/\\r|\\n/, '')
 
         config['from_fields'].to_a.each_with_index do |field, key|
-          if field[1]
-            config['to_fields'][field[1]] = variables[key + 1]
-          end
+          config['assigned'][field[0]] = variables[key + 1] if field[0]
+          config['to_fields'][field[1]] = variables[key + 1] if field[1]
         end
+        config['assigned']['checksum'] = checksum
 
         config['calculations'].each do |field, options|
           if config['calculations'][field]
@@ -53,7 +49,7 @@ class Parser
             config['to_fields'][field] = Coversions.send("#{config['calculations'][field]['method']}", *calculations_variables)
           end
         end
-        {'fields' => config['to_fields']}
+        {'fields' => config['to_fields'], 'origin' => config['assigned'], 'line' => config}
       else
         {'fields' => {}}
       end

@@ -4,7 +4,7 @@ require 'yaml'
 class Coversions
   class << self
     def load
-      @conversions = YAML.load_file('/Users/julius/work/sailing/send_to_boat/conversion.yml')
+      @conversions = YAML.load_file(File.absolute_path('conversion.yml'))
     end
 
     def conversions
@@ -29,17 +29,28 @@ end
 
 class Parser
   class << self
-    def get_the_name(line)
-      @all_variables = line.split(',')
-    end
-
     def parse(line)
       if config = Coversions.config(line)
         variables = line.split(',')
+        config['assigned'] = {}
+        config['from_fields'].to_a.each_with_index do |field, key|
+          if field && field[0]
+            config['assigned'][field[0]] = variables[key + 1]
+          end
+        end
 
-        config['from_fields'].to_a.each_with_index do |data, key|
-          if data[1]
-            config['to_fields'][data[1]] = variables[key + 1]
+        config['from_fields'].to_a.each_with_index do |field, key|
+          if field[1]
+            config['to_fields'][field[1]] = variables[key + 1]
+          end
+        end
+
+        config['calculations'].each do |field, options|
+          if config['calculations'][field]
+            calculations_variables = config['calculations'][field]['fields'].map do |f|
+              config['assigned'][f]
+            end
+            config['to_fields'][field] = Coversions.send("#{config['calculations'][field]['method']}", *calculations_variables)
           end
         end
         {'fields' => config['to_fields']}

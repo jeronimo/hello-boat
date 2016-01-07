@@ -1,7 +1,7 @@
 require 'socket'
 require 'pry'
 
-require 'helpers'
+require './helpers'
 
 host = '127.0.0.1'
 port = 7000
@@ -9,8 +9,9 @@ p "Initilize server #{host}:#{port}"
 
 class Server
   def initialize(host, port)
-    Coversions.read
+    Coversions.init
     @server = TCPServer.open(host, port)
+    @encoder = Encoder.new
   end
 
   def run
@@ -18,7 +19,7 @@ class Server
       Thread.start(@server.accept) do |client|
         while line = client.gets do
           p "#{Time.now} - #{line}"
-          Parser.parse
+          converted = Parser.covert(line)
         end
       end
     end

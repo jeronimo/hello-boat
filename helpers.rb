@@ -1,9 +1,11 @@
 require 'pry'
 require 'yaml'
 
+require './encoder'
+
 class Coversions
   class << self
-    def load
+    def init
       @conversions = YAML.load_file(File.absolute_path('conversion.yml'))
     end
 
@@ -29,7 +31,7 @@ end
 
 class Parser
   class << self
-    def parse(line)
+    def convert(line)
       if config = Coversions.config(line)
         variables = line.split(',')
         config['assigned'] = {}

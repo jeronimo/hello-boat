@@ -1,5 +1,4 @@
 rmb:
-  pgns: [129283, 129284]
   from_fields:
     status:
     cross_track_error:
@@ -17,6 +16,7 @@ rmb:
     ffa_mode_indicator:
     checksum:
   to_fields:
+    pgn: 129284
     sid:
     distanceToWaypoint:
     courseBearingReference:

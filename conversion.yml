@@ -10,7 +10,7 @@ rmb:
     destination_longitude: destinationLongitude
     e_or_s:
     range_to_destination: distanceToWaypoint
-    bearing: courseBearingReference
+    bearing: bearingPositionToDestinationWaypoint
     destination_closing: waypointClosingVelocity
     arrival_status:
     ffa_mode_indicator:

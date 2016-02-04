@@ -56,4 +56,9 @@ class TestCoversions < Minitest::Test
     assert_equal 'V*48', result['origin']['checksum']
   end
 
+  def test_rmb_sentece
+    result = Parser.convert(@rmb_sentence)
+    assert_equal "0.821", result['fields']['distanceToWaypoint']
+  end
+
 end

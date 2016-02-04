@@ -19,18 +19,16 @@ class TestEncoder < Minitest::Test
   def test_encoding_navigation_data
     # "bearingPositionToDestinationWaypoint"=>"291.359" - not sure if this one is correct
     @encoder.encode({pgn: 129284, "fields":{"distanceToWaypoint"=>"0.821", "originWaypointNumber"=>"002", "destinationWaypointNumber"=>"001", "destinationLatitude"=>"36.16211666666667", "destinationLongitude"=>"00522.316", "waypointClosingVelocity"=>"nan"}})
-    assert_equal 'ff,08,00,86,47,fb,ff,ff', @encoder.frame
+    assert_equal 'ff,52,00,00,00,00,ff,ff,ff,ff,ff,ff,ff,ff,ff,ff,02,00,00,00,01,00,00,00,af,e6,8d,15,8c,31,75,13,ff,ff', @encoder.frame
   end
 
   def test_encoding_navigation_data_by_example
     # "bearingPositionToDestinationWaypoint"=>"358.471" - not sure if this one is correct
+    # Found example - 10,a6,ba,00,00,00,ff,ff,ff,ff,ff,ff,ff,ff,65,f4,01,00,00,00,ff,ff,ff,ff,1a,b3,0c,1c,b4,71,bf,b6,00,00'
     @encoder.encode({pgn: 129284, "fields":{"sid" => 16,"distanceToWaypoint"=>"477.82", "courseBearingReference" => "True", "bearingPositionToDestinationWaypoint"=>"358.471", "originWaypointNumber"=>"001", "destinationWaypointNumber"=>"swanto", "destinationLatitude"=>"47.0594330", "destinationLongitude"=>"-122.8967500", "waypointClosingVelocity"=>"0"}})
-    assert_equal '10,a6,ba,00,00,00,ff,ff,ff,ff,ff,ff,ff,ff,65,f4,01,00,00,00,ff,ff,ff,ff,1a,b3,0c,1c,b4,71,bf,b6,00,00', @encoder.frame
-  end
+    assert_equal '10,a6,ba,00,00,00,ff,ff,ff,ff,ff,ff,ff,ff,65,f4,01,00,00,00,ff,ff,ff,ff,1a,b3,0c,1c,00,8f,40,49,00,00', @encoder.frame
 
-  # def test_to_distance
-  #   Encoder.to_distance()
-  # end
+  end
 end
 
 

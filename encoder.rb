@@ -55,8 +55,9 @@ class Encoder
   end
 
   def frame
-    if @frame.size < @config['Length']
-      until @frame.size >= @config['Length']
+    frame_length = @config['Length'] > 8 ? @config['Length'] : 8
+    if @frame.flatten.size < frame_length
+      until @frame.flatten.size >= frame_length
         @frame << 'ff'
       end
     end
@@ -76,11 +77,15 @@ class Encoder
       if field_config['Resolution']
         value = (value.to_f / field_config['Resolution'].to_f).round
       end
+
       whole_lenth_of_value = (field_config['BitLength'] / 4).to_i # Length defined in binary but needed in hex
       value = "%.#{whole_lenth_of_value}d" % [value] unless value.is_a? String
-      if ['rad', 'm/s', 'm'].include? field_config['Units']
+      if ['rad', 'm/s', 'm', 'deg'].include? field_config['Units']
         if convert_to_hex?(field_config)
+          value = value.to_i * -1 + 90 if value.to_i < 0 && field_config['Type'] == 'Latitude'
+          value = value.to_i * -1 + 180 if value.to_i < 0 && field_config['Type'] == 'Longitude'
           value = convert_to_hex(value, field_config)
+
           if whole_lenth_of_value > value.length
             until whole_lenth_of_value <= value.length
               value = "00#{value}"
@@ -103,11 +108,11 @@ class Encoder
     end
 
     def convert_to_hex?(field_config)
-      field_config['Units'] == 'rad' || field_config['Units'] == 'm'
+      ['rad', 'm', 'deg'].include? field_config['Units']
     end
 
     def convert_to_hex(value, field_config)
-      value.to_i(10).to_s(16) if convert_to_hex?(field_config)
+      value.to_s.to_i(10).to_s(16) if convert_to_hex?(field_config)
     end
 
     def to_distance(value, field_config)

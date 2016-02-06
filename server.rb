@@ -2,6 +2,7 @@ require 'socket'
 require 'pry'
 
 require './helpers'
+require './client'
 
 host = '127.0.0.1'
 port = 7000
@@ -17,20 +18,22 @@ class Server
   def run
     loop do
       Thread.start(@server.accept) do |client|
+        begin
+          @client = Client.new
+          while line = client.gets do
 
-        while line = client.gets do
-          begin
-            p "-->> #{Time.now} - #{line}"
+            puts "-->> #{Time.now} - #{line}"
             parsed = Parser.convert(line)
 
             unless parsed['fields'].empty?
               @encoder.encode(parsed)
-              p "<<--#{@encoder.full_sentence}"
+              @client.send(@encoder.full_sentence)
+              puts "<<--#{@encoder.full_sentence}"
             end
-          rescue Exception => e
-            puts e.message
-            puts e.backtrace.inspect
           end
+        rescue Exception => e
+          puts e.message
+          puts e.backtrace.inspect
         end
       end
     end

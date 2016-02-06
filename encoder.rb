@@ -1,8 +1,9 @@
 require 'json'
+require 'time'
 require 'pry'
 
 class Encoder
-  attr_accessor :file, :pgns, :config
+  attr_accessor :file, :pgns, :config, :pgn
 
   def initialize(path = '../canboat/analyzer/pgns.json')
     @file = File.read(File.absolute_path(path))
@@ -12,13 +13,14 @@ class Encoder
   def encode(data)
     @frame = []
     @byte = ''
-    @config = @pgns['PGNs'][data[:pgn].to_s]
+    @pgn = data['pgn'].to_s
+    @config = @pgns['PGNs'][@pgn]
     @config['Fields'].each_with_index do |field_config, i|
       name = field_config['Id']
 
       # Short codes
       if field_config['BitLength'] < 8 && field_config['Type'] == 'Lookup table'
-        if value = data[:fields][name]
+        if value = data['fields'][name]
           value = field_config['EnumValues'].find {|hash| hash.values.find{|v| v == value}}.keys.first
           value = "%.2s" % value.to_i(10).to_s(2)
           value = "0#{value}" if value.length == 1
@@ -37,7 +39,7 @@ class Encoder
       end
 
       # All >= 8 bit
-      if value = data[:fields][name]
+      if value = data['fields'][name]
         if value.to_s.match(/[a-zA-Z]/)
           convert_to_blank(field_config)
         else
@@ -54,14 +56,22 @@ class Encoder
     @frame << ['ff'] * bytes_count
   end
 
+  def frame_length
+    @frame_length ||= @config['Length'] > 8 ? @config['Length'] : 8
+  end
+
   def frame
-    frame_length = @config['Length'] > 8 ? @config['Length'] : 8
+
     if @frame.flatten.size < frame_length
       until @frame.flatten.size >= frame_length
         @frame << 'ff'
       end
     end
     @frame.join(',')
+  end
+
+  def full_sentence
+    "#{Time.now.utc.xmlschema(3)},2,#{@pgn},,255,#{frame_length},#{frame}"
   end
 
   class << self

@@ -30,31 +30,30 @@ class Coversions
 end
 
 class Parser
-  class << self
-    def convert(line)
-      if config = Coversions.config(line)
-        variables = line.split(',')
-        config['assigned'] = {}
-        checksum = variables.pop.gsub(/\\r|\\n/, '')
+  def self.convert(line)
+    if config = Coversions.config(line)
+      variables = line.split(',')
+      config['assigned'] = {}
+      checksum = variables.pop.gsub(/\\r|\\n/, '')
 
-        config['from_fields'].to_a.each_with_index do |field, key|
-          config['assigned'][field[0]] = variables[key + 1] if field[0]
-          config['to_fields'][field[1]] = variables[key + 1] if field[1]
-        end
-        config['assigned']['checksum'] = checksum
-
-        config['calculations'].each do |field, options|
-          if config['calculations'][field]
-            calculations_variables = config['calculations'][field]['fields'].map do |f|
-              config['assigned'][f]
-            end
-            config['to_fields'][field] = Coversions.send("#{config['calculations'][field]['method']}", *calculations_variables)
-          end
-        end
-        {'fields' => config['to_fields'], 'origin' => config['assigned'], 'line' => config}
-      else
-        {'fields' => {}}
+      config['from_fields'].to_a.each_with_index do |field, key|
+        config['assigned'][field[0]] = variables[key + 1] if field[0]
+        config['to_fields'][field[1]] = variables[key + 1] if field[1]
       end
+      config['assigned']['checksum'] = checksum
+
+      config['calculations'].each do |field, options|
+        if config['calculations'][field]
+          calculations_variables = config['calculations'][field]['fields'].map do |f|
+            config['assigned'][f]
+          end
+          config['to_fields'][field] = Coversions.send("#{config['calculations'][field]['method']}", *calculations_variables)
+        end
+      end
+      {'pgn' => config['to_fields']['pgn'], 'fields' => config['to_fields'], 'origin' => config['assigned'], 'line' => config}
+    else
+      {'fields' => {}}
     end
   end
+
 end

@@ -6,43 +6,43 @@ require './client'
 
 host = '127.0.0.1'
 port = 7000
-p "Initilize server #{host}:#{port}"
 
-class Server
-  def initialize(host, port)
-    Coversions.init
-    @server = TCPServer.open(host, port)
-    @encoder = Encoder.new
-  end
+module NMEA0183
+  class Server
+    def initialize(host, port)
+      NMEA2000::Coversions.init
+      @server = TCPServer.open(host, port)
+      @encoder = NMEA2000::Encoder.new
+    end
 
-  def run
-    loop do
-      Thread.start(@server.accept) do |client|
-        begin
-          @client = Client.new
-          while line = client.gets do
+    def run
+      loop do
+        Thread.start(@server.accept) do |client|
+          begin
+            @client = NMEA2000::Client.new
+            while line = client.gets do
 
-            puts "-->> #{Time.now} - #{line}"
-            parsed = Parser.convert(line)
+              puts "-->> #{Time.now} - #{line}"
+              parsed = NMEA0183::Parser.convert(line)
 
-            unless parsed['fields'].empty?
-              @encoder.encode(parsed)
-              @client.send(@encoder.full_sentence)
-              puts "<<--#{@encoder.full_sentence}"
+              unless parsed['fields'].empty?
+                @encoder.encode(parsed)
+                @client.send(@encoder.full_sentence)
+                puts "<<--#{@encoder.full_sentence}"
+              end
             end
+          rescue Exception => e
+            puts e.message
+            puts e.backtrace.inspect
           end
-        rescue Exception => e
-          puts e.message
-          puts e.backtrace.inspect
         end
       end
     end
   end
-
-
 end
 
-s = Server.new(host, port)
+p "Initilize server #{host}:#{port}"
+s = NMEA0183::Server.new(host, port)
 s.run
 
 

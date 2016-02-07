@@ -1,9 +1,9 @@
 require 'minitest/autorun'
 require './encoder'
 
-class TestEncoder < Minitest::Test
+class TestNMEA2000Encoder < Minitest::Test
   def setup
-    @encoder = Encoder.new
+    @encoder = NMEA2000::Encoder.new
   end
 
   def test_file_load

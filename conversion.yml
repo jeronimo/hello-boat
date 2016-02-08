@@ -3,12 +3,12 @@ rmb:
     status:
     cross_track_error:
     direction_to_steer:
-    to_waypoint: destinationWaypointNumber
-    from_waypoint: originWaypointNumber
+    to_waypoint: originWaypointNumber
+    from_waypoint: destinationWaypointNumber
     destination_latitude: destinationLatitude
     n_or_s:
     destination_longitude: destinationLongitude
-    e_or_s:
+    e_or_w:
     range_to_destination: distanceToWaypoint
     bearing: bearingPositionToDestinationWaypoint
     destination_closing: waypointClosingVelocity
@@ -36,3 +36,21 @@ rmb:
     destinationLatitude:
       method: coordinate_to_decimals
       fields: ['destination_latitude', 'n_or_s']
+    destinationLongitude:
+      method: coordinate_to_decimals
+      fields: ['destination_longitude', 'e_or_w']
+xte:
+  from_fields:
+    status_1:
+    status_2:
+    xte: xte
+    direction_to_steer:
+  to_fields:
+    pgn: 129283
+    sid:
+    xteMode:
+    reserved:
+    navigationTerminated:
+    xte:
+
+

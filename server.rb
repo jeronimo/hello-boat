@@ -12,22 +12,26 @@ module NMEA0183
     def initialize(host, port)
       NMEA2000::Coversions.init
       @server = TCPServer.open(host, port)
-      @encoder = NMEA2000::Encoder.new
+
     end
 
     def run
       loop do
         Thread.start(@server.accept) do |client|
           begin
-            @client = NMEA2000::Client.new
             while line = client.gets do
 
               puts "-->> #{Time.now} - #{line}"
               parsed = NMEA0183::Parser.convert(line)
 
               unless parsed['fields'].empty?
+                parsed['fields']['sid'] = '01'
+                p parsed['fields']
+                @client = NMEA2000::Client.new
+                @encoder = NMEA2000::Encoder.new
                 @encoder.encode(parsed)
                 @client.send(@encoder.full_sentence)
+                # @client.listen
                 puts "<<--#{@encoder.full_sentence}"
               end
             end

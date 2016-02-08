@@ -14,6 +14,10 @@ class TestNMEA2000Coversions < Minitest::Test
     assert_equal "-5.371933333333334", NMEA2000::Coversions.coordinate_to_decimals('00522.316','W')
   end
 
+  def test_coordinate_to_decimals_for_west_2
+    assert_equal "-5.37075", NMEA2000::Coversions.coordinate_to_decimals('00522.245','W')
+  end
+
   def test_coordinate_to_decimals_for_north
     assert_equal "36.16211666666667", NMEA2000::Coversions.coordinate_to_decimals('3609.727', 'N')
   end
@@ -38,12 +42,12 @@ class TestNMEA2000Coversions < Minitest::Test
 
   def test_parser_rmb_destination_waypoint_number
     result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal '001', result['fields']['destinationWaypointNumber']
+    assert_equal '002', result['fields']['destinationWaypointNumber']
   end
 
   def test_parser_rmb_origin_waypoint_number
     result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal '002', result['fields']['originWaypointNumber']
+    assert_equal '001', result['fields']['originWaypointNumber']
   end
 
   def test_parser_rmb_destination_latitude

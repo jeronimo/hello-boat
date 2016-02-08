@@ -1,9 +1,10 @@
 require 'socket'
+require 'pry'
 
 module NMEA2000
   class Client
     def initialize
-      @server = TCPSocket.open('10.0.0.1', 5000)
+      @server = TCPSocket.new('10.0.0.1', 5000)
       @request = nil
       @response = nil
       #listen
@@ -15,14 +16,15 @@ module NMEA2000
       @response = Thread.new do
         loop do
           msg = @server.gets.chomp
+          puts "Client <- #{msg}"
         end
       end
     end
 
     def send(msg)
-      @request = Thread.new do
-        puts "Client -> #{msg}"
+      Thread.new do
         @server.puts( msg )
+        puts "Client ->>> #{msg}"
       end
     end
   end

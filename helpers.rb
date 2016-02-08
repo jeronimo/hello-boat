@@ -52,7 +52,7 @@ module NMEA0183
             end
             config['to_fields'][field] = NMEA2000::Coversions.send("#{config['calculations'][field]['method']}", *calculations_variables)
           end
-        end
+        end if config['calculations']
         {'pgn' => config['to_fields']['pgn'], 'fields' => config['to_fields'], 'origin' => config['assigned'], 'line' => config}
       else
         {'fields' => {}}

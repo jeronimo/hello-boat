@@ -18,16 +18,15 @@ module NMEA2000
       @config = @pgns['PGNs'][@pgn]
       @config['Fields'].each_with_index do |field_config, i|
         name = field_config['Id']
-
         # Short codes
-        if field_config['BitLength'] < 8 && field_config['Type'] == 'Lookup table'
+        if field_config['BitLength'] < 8 && (field_config['Type'] == 'Lookup table' || field_config['Type'] == 'Binary data')
           if value = data['fields'][name]
             value = field_config['EnumValues'].find {|hash| hash.values.find{|v| v == value}}.keys.first
-            value = "%.2s" % value.to_i(10).to_s(2)
+            value = "%0.#{field_config['BitLength']}d" % value.to_i(10).to_s(2)
             value = "0#{value}" if value.length == 1
             @byte += value
           else
-            @byte += '00'
+            @byte += "%0.#{field_config['BitLength']}d" %'00'
           end
 
           if @byte.length == 8 || @config['Fields'][i+1].nil? || @config['Fields'][i+1]['BitLength'] >= 8
@@ -36,12 +35,13 @@ module NMEA2000
             @frame << @byte
             @byte = ''
           end
+
           next
         end
 
         # All >= 8 bit
         if value = data['fields'][name]
-          if value.to_s.match(/[a-zA-Z]/)
+          if value.to_s.match(/[a-zA-Z]/) || value.to_s.empty?
             convert_to_blank(field_config)
           else
             @frame << Encoder.convert(value, field_config)
@@ -58,7 +58,7 @@ module NMEA2000
     end
 
     def frame_length
-      @frame_length ||= @config['Length'] > 8 ? @config['Length'] : 8
+      @frame_length ||= @config['Length'] #> 8 ? @config['Length'] : 8
     end
 
     def frame
@@ -72,7 +72,7 @@ module NMEA2000
     end
 
     def full_sentence
-      "#{Time.now.utc.xmlschema(3)},2,#{@pgn},,255,#{frame_length},#{frame}"
+      "#{Time.now.utc.xmlschema(3)},6,#{@pgn},0,255,#{frame_length},#{frame}"
     end
 
     class << self
@@ -82,6 +82,9 @@ module NMEA2000
 
         if value && field_config['Id'] == 'sid'
           value = value.to_s.to_i(10).to_s(16)
+          value = "%.2s" % value
+          value = "0#{value}" if value.length == 1
+          # value = 'ff'
         end
 
         value = degrees_to_radians(value) if field_config['Units'] == 'rad'
@@ -93,10 +96,8 @@ module NMEA2000
         value = "%.#{whole_lenth_of_value}d" % [value] unless value.is_a? String
         if ['rad', 'm/s', 'm', 'deg'].include? field_config['Units']
           if convert_to_hex?(field_config)
-            value = value.to_i * -1 + 90 if value.to_i < 0 && field_config['Type'] == 'Latitude'
-            value = value.to_i * -1 + 180 if value.to_i < 0 && field_config['Type'] == 'Longitude'
             value = convert_to_hex(value, field_config)
-
+            value.gsub!('..', '') if value.match('..f')
             if whole_lenth_of_value > value.length
               until whole_lenth_of_value <= value.length
                 value = "00#{value}"
@@ -123,7 +124,7 @@ module NMEA2000
       end
 
       def convert_to_hex(value, field_config)
-        value.to_s.to_i(10).to_s(16) if convert_to_hex?(field_config)
+        "%x" % value.to_s.to_i if convert_to_hex?(field_config)
       end
 
       def to_distance(value, field_config)

@@ -60,9 +60,19 @@ class TestNMEA2000Coversions < Minitest::Test
     assert_equal 'V*48', result['origin']['checksum']
   end
 
-  def test_rmb_sentece
+  def test_rmb_sentense
     result = NMEA0183::Parser.convert(@rmb_sentence)
     assert_equal "0.821", result['fields']['distanceToWaypoint']
+  end
+
+  def test_parser_rmb_bearing_position_to_destination
+    result = NMEA0183::Parser.convert(@rmb_sentence)
+    assert_equal '291.359', result['fields']['bearingPositionToDestinationWaypoint']
+  end
+
+  def test_parser_rmb_bearing_origin_to_destination
+    result = NMEA0183::Parser.convert(@rmb_sentence)
+    assert_equal '291.359', result['fields']['bearingOriginToDestinationWaypoint']
   end
 
 end

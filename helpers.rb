@@ -41,8 +41,15 @@ module NMEA0183
 
         config['from_fields'].to_a.each_with_index do |field, key|
           config['assigned'][field[0]] = variables[key + 1] if field[0]
-          config['to_fields'][field[1]] = variables[key + 1] if field[1]
+          if field[1]
+            if field[1].is_a?(Array)
+              field[1].each {|f| config['to_fields'][f] = variables[key + 1]}
+            else
+              config['to_fields'][field[1]] = variables[key + 1]
+            end
+          end
         end
+
         config['assigned']['checksum'] = checksum
 
         config['calculations'].each do |field, options|

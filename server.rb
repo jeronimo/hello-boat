@@ -25,7 +25,7 @@ module NMEA0183
               parsed = NMEA0183::Parser.convert(line)
 
               unless parsed['fields'].empty?
-                parsed['fields']['sid'] = '01'
+                parsed['fields']['sid'] = '66'
                 p parsed['fields']
                 @client = NMEA2000::Client.new
                 @encoder = NMEA2000::Encoder.new

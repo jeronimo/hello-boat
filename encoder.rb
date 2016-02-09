@@ -72,7 +72,7 @@ module NMEA2000
     end
 
     def full_sentence
-      "#{Time.now.utc.xmlschema(3)},6,#{@pgn},0,255,#{frame_length},#{frame}"
+      "#{Time.now.utc.xmlschema(3)},3,#{@pgn},2,255,#{frame_length},#{frame}"
     end
 
     class << self

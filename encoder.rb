@@ -62,7 +62,6 @@ module NMEA2000
     end
 
     def frame
-
       if @frame.flatten.size < frame_length
         until @frame.flatten.size >= frame_length
           @frame << 'ff'
@@ -100,7 +99,7 @@ module NMEA2000
             value.gsub!('..', '') if value.match('..f')
             if whole_lenth_of_value > value.length
               until whole_lenth_of_value <= value.length
-                value = "00#{value}"
+                value = "0#{value}"
               end
             end
           end

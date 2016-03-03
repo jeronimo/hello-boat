@@ -62,7 +62,7 @@ class TestNMEA2000Coversions < Minitest::Test
 
   def test_rmb_sentense
     result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal "0.821", result['fields']['distanceToWaypoint']
+    assert_equal 1520.492, result['fields']['distanceToWaypoint']
   end
 
   def test_parser_rmb_bearing_position_to_destination

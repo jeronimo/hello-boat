@@ -27,6 +27,10 @@ module NMEA2000
         tenths_and_hundreds = coordinate[/(\d\d\..*)/, 1].to_f / 60
         "#{['W', 'S'].include?(hemisphere) ? '-' : ''}#{digrees.to_i + tenths_and_hundreds}"
       end
+
+      def nautical_miles_to_meters(nm)
+        nm.to_f * 1852.0
+      end
     end
   end
 end

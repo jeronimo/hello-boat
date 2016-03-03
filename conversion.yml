@@ -33,6 +33,9 @@ rmb:
     destinationLongitude:
     waypointClosingVelocity:
   calculations:
+    distanceToWaypoint:
+      method: nautical_miles_to_meters
+      fields: ['range_to_destination']
     destinationLatitude:
       method: coordinate_to_decimals
       fields: ['destination_latitude', 'n_or_s']
@@ -52,5 +55,9 @@ xte:
     reserved:
     navigationTerminated:
     xte:
+  calculations:
+      xte:
+        method: nautical_miles_to_meters
+        fields: ['xte']
 
 

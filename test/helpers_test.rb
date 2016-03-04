@@ -22,6 +22,10 @@ class TestNMEA2000Coversions < Minitest::Test
     assert_equal "36.16211666666667", NMEA2000::Coversions.coordinate_to_decimals('3609.727', 'N')
   end
 
+  def test_nautical_miles_to_meters
+    assert_equal 1852.0, NMEA2000::Coversions.nautical_miles_to_meters(1)
+  end
+
   def test_get_sentence_name_for_rmb
     assert_equal 'RMB', NMEA2000::Coversions.get_sentence_name(@rmb_sentence)
   end

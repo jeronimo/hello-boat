@@ -32,6 +32,34 @@ class TestNMEA2000Encoder < Minitest::Test
     @encoder.encode({"pgn"=>129283, "fields" => {"sid"=>"01", "xteMode"=>nil, "reserved"=>nil, "navigationTerminated"=>nil, "xte"=>"0.000"}})
     assert_equal '01,00,00,00,00,00', @encoder.frame
   end
+
+  def test_convert_meter_units
+    assert_equal ["e8", "03", "00", "00"], NMEA2000::Encoder.convert(10, {'Units' => 'm', 'Resolution' => '0.01', 'BitLength' => 32})
+  end
+
+  def test_covert_degrees_to_radians
+    assert_equal ["b8", "7a"], NMEA2000::Encoder.convert(180, {'Units' => 'rad', 'Resolution' => '0.0001', 'BitLength' => 16})
+  end
+
+  def test_covert_degrees
+    assert_equal ["00", "e9", "a4", "35"], NMEA2000::Encoder.convert(90, {'Units' => 'deg', 'Resolution' => '0.0000001', 'BitLength' => 32})
+  end
+
+  def test_covert_negative_degrees
+    assert_equal ["70", "b1", "a5", "fc"], NMEA2000::Encoder.convert(-90, {'Units' => 'deg', 'Resolution' => '0.0000001', 'BitLength' => 32})
+  end
+
+  def test_covert_speed_units
+    assert_equal ["00", "10"], NMEA2000::Encoder.convert(10, {'Units' => 'm/s', 'Resolution' => '0.01', 'BitLength' => 16})
+  end
+
+  def test_shorter_than_byte_cut
+    assert_equal ["34"], NMEA2000::Encoder.convert(1234, {'BitLength' => 2})
+  end
+
+  def test_shorter_than_byte_extension
+    assert_equal ["101"], NMEA2000::Encoder.convert(5, {'Type' => 'Lookup table', 'BitLength' => 3})
+  end
 end
 
 

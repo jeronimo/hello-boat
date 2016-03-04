@@ -83,7 +83,6 @@ module NMEA2000
           value = value.to_s.to_i(10).to_s(16)
           value = "%.2s" % value
           value = "0#{value}" if value.length == 1
-          # value = 'ff'
         end
 
         value = degrees_to_radians(value) if field_config['Units'] == 'rad'

@@ -12,7 +12,6 @@ module NMEA0183
     def initialize(host, port)
       NMEA2000::Coversions.init
       @server = TCPServer.open(host, port)
-
     end
 
     def run

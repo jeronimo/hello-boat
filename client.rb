@@ -1,5 +1,4 @@
 require 'socket'
-require 'pry'
 
 # New instance needs to be created everytime NMEA0183::Server receives new message (Not sure why it is like that)
 module NMEA2000

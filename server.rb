@@ -1,8 +1,7 @@
 require 'socket'
-require 'pry'
 
-require './helpers'
-require './client'
+require "#{File.dirname(__FILE__)}/helpers"
+require "#{File.dirname(__FILE__)}/client"
 
 module NMEA0183
   class Server

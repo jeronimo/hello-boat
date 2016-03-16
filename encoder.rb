@@ -1,6 +1,5 @@
 require 'json'
 require 'time'
-require 'pry'
 
 module NMEA2000
   class Encoder

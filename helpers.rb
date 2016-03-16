@@ -1,13 +1,12 @@
-require 'pry'
 require 'yaml'
 
-require './encoder'
+require "#{File.dirname(__FILE__)}/encoder"
 
 module NMEA2000
   class Coversions
     class << self
       def init
-        @conversions = YAML.load_file(File.absolute_path('conversion.yml'))
+        @conversions = YAML.load_file("#{File.dirname(__FILE__)}/conversion.yml")
       end
 
       def conversions

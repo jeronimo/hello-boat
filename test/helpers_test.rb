@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require './helpers'
+require './lib/helpers'
 
 class TestNMEA2000Coversions < Minitest::Test
   def setup

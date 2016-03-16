@@ -6,7 +6,7 @@ module NMEA2000
   class Coversions
     class << self
       def init
-        @conversions = YAML.load_file("#{File.dirname(__FILE__)}/conversion.yml")
+        @conversions = YAML.load_file("#{File.dirname(__FILE__)}/../conversion.yml")
       end
 
       def conversions

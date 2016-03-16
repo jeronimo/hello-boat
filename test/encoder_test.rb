@@ -1,9 +1,9 @@
 require 'minitest/autorun'
-require './encoder'
+require './lib/encoder'
 
 class TestNMEA2000Encoder < Minitest::Test
   def setup
-    @encoder = NMEA2000::Encoder.new
+    @encoder = NMEA2000::Encoder.new({'path_to_pgns_json' => '../canboat/analyzer/pgns.json'})
   end
 
   def test_file_load

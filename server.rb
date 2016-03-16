@@ -4,14 +4,15 @@ require 'pry'
 require './helpers'
 require './client'
 
-host = '127.0.0.1'
-port = 7000
-
 module NMEA0183
   class Server
-    def initialize(host, port)
+    attr_accessor :config
+
+    def initialize(config)
+      @config = config
       NMEA2000::Coversions.init
-      @server = TCPServer.open(host, port)
+      @server = TCPServer.open(config['server']['host'], config['server']['port'])
+      puts "Server initilize #{config['server']['host']}:#{config['server']['port']}"
     end
 
     def run
@@ -20,18 +21,14 @@ module NMEA0183
           begin
             while line = client.gets do
 
-              puts "-->> #{Time.now} - #{line}"
+              puts "Server #{Time.now} > #{line}"
               parsed = NMEA0183::Parser.convert(line)
 
               unless parsed['fields'].empty?
-                parsed['fields']['sid'] = '66'
-                # p parsed['fields']
-                @client = NMEA2000::Client.new
-                @encoder = NMEA2000::Encoder.new
+                @client = NMEA2000::Client.new(@config)
+                @encoder = NMEA2000::Encoder.new(@config)
                 @encoder.encode(parsed)
                 @client.send(@encoder.full_sentence)
-                # @client.listen
-                puts "<<--#{@encoder.full_sentence}"
               end
             end
           rescue Exception => e
@@ -44,9 +41,6 @@ module NMEA0183
   end
 end
 
-p "Initilize server #{host}:#{port}"
-s = NMEA0183::Server.new(host, port)
-s.run
 
 
 # Examples

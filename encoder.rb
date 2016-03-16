@@ -4,10 +4,11 @@ require 'pry'
 
 module NMEA2000
   class Encoder
-    attr_accessor :file, :pgns, :config, :pgn
+    attr_accessor :file, :pgns, :config, :pgn, :pgn_config
 
-    def initialize(path = '../canboat/analyzer/pgns.json')
-      @file = File.read(File.absolute_path(path))
+    def initialize(config)
+      @config = config
+      @file = File.read(File.absolute_path(config['path_to_pgns_json']))
       @pgns = JSON.parse(file)
     end
 
@@ -15,8 +16,8 @@ module NMEA2000
       @frame = []
       @byte = ''
       @pgn = data['pgn'].to_s
-      @config = @pgns['PGNs'][@pgn]
-      @config['Fields'].each_with_index do |field_config, i|
+      @pgn_config = @pgns['PGNs'][@pgn]
+      @pgn_config['Fields'].each_with_index do |field_config, i|
         name = field_config['Id']
         # Short codes
         if field_config['BitLength'] < 8 && (field_config['Type'] == 'Lookup table' || field_config['Type'] == 'Binary data')
@@ -29,7 +30,7 @@ module NMEA2000
             @byte += "%0.#{field_config['BitLength']}d" %'00'
           end
 
-          if @byte.length == 8 || @config['Fields'][i+1].nil? || @config['Fields'][i+1]['BitLength'] >= 8
+          if @byte.length == 8 || @pgn_config['Fields'][i+1].nil? || @pgn_config['Fields'][i+1]['BitLength'] >= 8
             @byte = @byte.to_i(10).to_s(16)
             @byte = "0#{@byte}" if @byte.length == 1
             @frame << @byte
@@ -58,7 +59,7 @@ module NMEA2000
     end
 
     def frame_length
-      @frame_length ||= @config['Length'] #> 8 ? @config['Length'] : 8
+      @frame_length ||= @pgn_config['Length'] #> 8 ? @pgn_config['Length'] : 8
     end
 
     def frame

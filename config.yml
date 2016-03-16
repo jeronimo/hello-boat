@@ -1,0 +1,7 @@
+client:
+  host: '10.0.0.1'
+  port: 5000
+server:
+  host: '127.0.0.1'
+  port: 7000
+path_to_pgns_json: '../canboat/analyzer/pgns.json'

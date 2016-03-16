@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require './lib/helpers'
+require './lib/conversions'
 
 class TestNMEA2000Coversions < Minitest::Test
   def setup
@@ -43,40 +43,4 @@ class TestNMEA2000Coversions < Minitest::Test
     config = NMEA2000::Coversions.config(@rmb_sentence)
     assert_equal 129284, config['to_fields']['pgn']
   end
-
-  def test_parser_rmb_destination_waypoint_number
-    result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal '002', result['fields']['destinationWaypointNumber']
-  end
-
-  def test_parser_rmb_origin_waypoint_number
-    result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal '001', result['fields']['originWaypointNumber']
-  end
-
-  def test_parser_rmb_destination_latitude
-    result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal '36.16211666666667', result['fields']['destinationLatitude']
-  end
-
-  def test_parser_checksum
-    result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal 'V*48', result['origin']['checksum']
-  end
-
-  def test_rmb_sentense
-    result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal 1520.492, result['fields']['distanceToWaypoint']
-  end
-
-  def test_parser_rmb_bearing_position_to_destination
-    result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal '291.359', result['fields']['bearingPositionToDestinationWaypoint']
-  end
-
-  def test_parser_rmb_bearing_origin_to_destination
-    result = NMEA0183::Parser.convert(@rmb_sentence)
-    assert_equal '291.359', result['fields']['bearingOriginToDestinationWaypoint']
-  end
-
 end

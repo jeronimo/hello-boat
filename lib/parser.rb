@@ -3,6 +3,8 @@ require "#{File.dirname(__FILE__)}/conversions"
 module NMEA0183
   class Parser
     def self.convert(line)
+      NMEA2000::Coversions.init if NMEA2000::Coversions.conversions.nil?
+
       if config = NMEA2000::Coversions.config(line)
         variables = line.split(',')
         config['assigned'] = {}

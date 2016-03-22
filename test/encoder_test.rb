@@ -57,8 +57,24 @@ class TestNMEA2000Encoder < Minitest::Test
     assert_equal ["34"], NMEA2000::Encoder.convert(1234, {'BitLength' => 2})
   end
 
-  def test_shorter_than_byte_extension
-    assert_equal ["101"], NMEA2000::Encoder.convert(5, {'Type' => 'Lookup table', 'BitLength' => 3})
+  def test_to_binary_conversion
+    assert_equal "101", NMEA2000::Encoder.convert_to_binary(5, {'BitLength' => 3})
+    # it still does more than than BitLength, maybe it is ok
+    assert_equal "101", NMEA2000::Encoder.convert_to_binary(5, {'BitLength' => 1})
+  end
+
+  def test_shorter_than_byte_and_lookup?
+    assert_equal true, NMEA2000::Encoder.shorter_than_byte_and_lookup?({'BitLength' => 5, 'Type' => 'Lookup table'})
+    assert_equal true, NMEA2000::Encoder.shorter_than_byte_and_lookup?({'BitLength' => 5, 'Type' => 'Binary data'})
+  end
+
+  def test_empty_get_lookup_field
+    assert_equal "0000", NMEA2000::Encoder.get_lookup_field('field_name', {'fields' => {}}, {'BitLength' => 4, 'Type' => 'Lookup table', 'EnumValues' => {}})
+    assert_equal "0", NMEA2000::Encoder.get_lookup_field('field_name', {'fields' => {}}, {'BitLength' => 1, 'Type' => 'Lookup table', 'EnumValues' => {}})
+  end
+
+  def test_present_get_lookup_field
+    assert_equal "01000", NMEA2000::Encoder.get_lookup_field('field', {'fields' => {'field' => 'Some value'}}, {'BitLength' => 5, 'Type' => 'Lookup table', 'EnumValues' => [{'8' => 'Some value'}]})
   end
 end
 

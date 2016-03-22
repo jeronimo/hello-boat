@@ -9,7 +9,6 @@ It is still a spike with only minor tests coverage and still needs some work to 
 ## Requirements
 The code relies on [Canboat](https://github.com/canboat/canboat):
 
-* It reads pgns.json file which is currently not valid json (https://github.com/canboat/canboat/issues/56)
 * It expects that n2kd_monitor is already running and tries to connect to it as a client
 
 ## Config

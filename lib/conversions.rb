@@ -1,7 +1,7 @@
 require 'yaml'
 
 module NMEA2000
-  class Coversions
+  class Conversions
     class << self
       def init
         @conversions = YAML.load_file("#{File.dirname(__FILE__)}/../conversion.yml")
@@ -27,6 +27,10 @@ module NMEA2000
 
       def nautical_miles_to_meters(nm)
         nm.to_f * 1852.0
+      end
+
+      def celcius_to_kalvin(temperature)
+        temperature + 273.15
       end
     end
   end

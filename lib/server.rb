@@ -10,7 +10,7 @@ module NMEA0183
 
     def initialize(config)
       @config = config
-      NMEA2000::Coversions.init
+      NMEA2000::Conversions.init
       @server = TCPServer.open(config['server']['host'], config['server']['port'])
       puts "Server initilize #{config['server']['host']}:#{config['server']['port']}"
     end

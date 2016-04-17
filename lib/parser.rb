@@ -3,9 +3,9 @@ require "#{File.dirname(__FILE__)}/conversions"
 module NMEA0183
   class Parser
     def self.convert(line)
-      NMEA2000::Coversions.init if NMEA2000::Coversions.conversions.nil?
+      NMEA2000::Conversions.init if NMEA2000::Conversions.conversions.nil?
 
-      if config = NMEA2000::Coversions.config(line)
+      if config = NMEA2000::Conversions.config(line)
         variables = line.split(',')
         config['assigned'] = {}
         checksum = variables.pop.gsub(/\\r|\\n/, '')
@@ -28,7 +28,7 @@ module NMEA0183
             calculations_variables = config['calculations'][field]['fields'].map do |f|
               config['assigned'][f]
             end
-            config['to_fields'][field] = NMEA2000::Coversions.send("#{config['calculations'][field]['method']}", *calculations_variables)
+            config['to_fields'][field] = NMEA2000::Conversions.send("#{config['calculations'][field]['method']}", *calculations_variables)
           end
         end if config['calculations']
         {'pgn' => config['to_fields']['pgn'], 'fields' => config['to_fields'], 'origin' => config['assigned'], 'line' => config}

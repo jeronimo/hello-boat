@@ -13,6 +13,7 @@ module NMEA2000
 
     def encode(data)
       @frame = []
+      @frame_length = nil
       @byte = ''
       @pgn = data['pgn'].to_s
       @pgn_config = @pgns['PGNs'][@pgn]
@@ -58,7 +59,7 @@ module NMEA2000
     end
 
     def full_sentence
-      "#{Time.now.utc.xmlschema(3)},3,#{@pgn},2,255,#{frame_length},#{frame}"
+      "#{Time.now.utc.xmlschema(3)},3,#{@pgn},1,255,#{frame_length},#{frame}"
     end
 
     class << self
@@ -106,7 +107,7 @@ module NMEA2000
           value = "%.#{whole_lenth_of_value}d" % [value]
         end
 
-        if ['rad', 'm/s', 'm', 'deg'].include? field_config['Units']
+        if ['rad', 'm/s', 'm', 'deg', 'K'].include? field_config['Units']
           if convert_to_hex?(field_config)
             value = convert_to_hex(value, field_config)
             value.gsub!('..', '') if value.match('..f')
@@ -132,7 +133,7 @@ module NMEA2000
       end
 
       def convert_to_hex?(field_config)
-        ['rad', 'm', 'deg'].include? field_config['Units']
+        ['rad', 'm', 'deg', 'K'].include? field_config['Units']
       end
 
       def convert_to_hex(value, field_config)

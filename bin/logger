@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require "#{File.dirname(__FILE__)}/../lib/logger"
+
+config = YAML.load_file("#{File.dirname(__FILE__)}/../config.yml")
+filter = YAML.load_file("#{File.dirname(__FILE__)}/../filter.yml")
+
+logger = NMEA2000::Logger.new(config, filter)
+logger.run
+
